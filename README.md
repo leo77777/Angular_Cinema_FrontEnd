@@ -2,4 +2,5 @@
 Projet Cinémas : front-end avec Angular
 
 
-![Screenshot](https://user-images.githubusercontent.com/39586770/205004227-4f7a93c4-9a0c-426a-95e6-2535cffad7c5.png)
+![Screenshot](https://user-images.githubusercontent.com/39586770/205004585-d3893e05-8ef1-4f66-bc37-4a58cd5cab5f.png)
+
