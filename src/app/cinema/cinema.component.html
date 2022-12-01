@@ -1,0 +1,104 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-3"> <!-- Afiche la liste des villes -->
+            <ul *ngIf="villes" class="list-group" >  <!-- Parcours tableau des villes -->          
+                <li *ngFor="let v of villes._embedded.villes" class="list-group-item clickable" 
+                    [ngClass]="v==currentVille? 'active':''"
+                    (click)="onGetCinemas(v)" >  <!-- onGetCinemas(v):cinemas
+                                                    (liste des cinemas pour 1 ville V ) -->                
+                            {{v.name}}                    
+                </li> 
+            </ul>
+        </div> <!-- Fin Afiche la liste des villes -->
+
+        <div class="col-md-9"> <!-- Afiche la liste des cinemas pour 1 ville V-->
+            <div class="panel panel-default">
+                <div class="panel-heading">Liste des cinémas</div>
+                <div class="panel-body">
+
+                    <!-- Liste des cinema pour 1 ville V  -->
+                    <ul *ngIf="cinemas" class="nav nav-pills" > <!-- Parcours tableau des cinenmas pour 1 ville V -->  
+                        <li *ngFor="let c of cinemas._embedded.cinemas" 
+                            [ngClass]="c==currentCinema? 'active':''"
+                            class="clickable" 
+                            (click)="onGetSalles(c)" > <!-- onGetSalles(c):salles 
+                                                       (liste des salles pour 1 cinema C (de 1 ville V) )-->                 
+                                    <a>{{c.name}}</a>                   
+                        </li> 
+                    </ul>
+
+                    <!-- Afiche la liste des salles pour 1 cinema C (de 1 ville V)  -->
+                    <div class="row"  *ngIf="salles" > <!-- Parcours tableau des salles, de 1 cinema c de 1 ville v  -->  
+                        <div *ngFor="let s of salles._embedded.salles"> <!-- Liste des salles -->
+                            <div  class="col-md-6"> <!-- 2 salles par ligne -->
+                                <div class="panel panel-default">
+                                    <div class="panel panel-heading">{{s.name}} </div> 
+                                    <!-- <span> : {{ s.projections._embedded.projections[0].film.titre}}</span>  -->
+                                    <div class="panel panel-body" *ngIf="s.projections"> 
+                                        <div class="row">
+
+                                            <div class="col-md-4"> <!-- photo d'une salle -->
+                                                <img width="160" src="{{cinemaService.host + '/imageFilm/' 
+                                                    + s.projections._embedded.projections[0].film.id }}" alt="">
+                                            </div> <!-- fin photo d'une salle -->
+                                             
+                                            <div class="col-md-8"> <!-- Liste des projections d'une salle -->
+                                                    <div class="list-group"> 
+                                                        <!-- Parcours tableau des projections de 1 salle s 
+                                                         de 1 cinema  c de 1 ville v -->  
+                                                        <ul *ngIf="s.projections._embedded.projections">
+                                                            <li  class="list-group-item">Séances</li>
+                                                            <li *ngFor="let p of s.projections._embedded.projections"
+                                                                class="list-group-item clickable"
+                                                                [ngClass]="p==currentProjection?'active':''"
+                                                                (click)="onGetTicketsPlaces(p)" >
+                                                                 <!-- onGetTicketsPlaces(p):currentProjection 
+                                                                      (liste des ticket pour la projection )-->
+                                                                 {{p.seance.heureDebut}} (prix:{{p.prix | number:'0.00'}}frs)
+                                                            </li>                                                                
+                                                        </ul>                                                
+                                                    </div>
+                                            </div> <!-- fin Lites des projections d'une salle -->
+                                        </div> <!-- fin row -->
+                                                                               
+                                        <!-- Liste des tickets d'une projection,  de 1 salle s de 1 cinema c de 1 ville v-->
+                                        <div class="row" *ngIf="currentProjection">  <!-- Parcours tableau des tickets de 1 projection p -->  
+                                            <div *ngIf="currentProjection.salle.id==s.id"> 
+                                                <div *ngIf="currentProjection.tickets">
+                                                    <button *ngFor="let ticket of currentProjection.tickets._embedded.tickets"                                                            
+                                                            class="{{getTicketClass(ticket)}}"
+                                                            [disabled]="ticket.reserve"
+                                                            (click)="onSelectTicket(ticket)">                                                            
+                                                                            {{ticket.place.numero}} 
+                                                    </button> 
+
+                                                    <!-- Formulaire de reservation tickets : -->
+                                                    <div *ngIf="selectedTickets.length>0"> 
+                                                        <form #f="ngForm"  (ngSubmit)="onPayTickets(f.value)">
+                                                            <div class="form-group">
+                                                                <label for="nomEtPrenom" class="control-label">Nom client : </label>
+                                                                <input type="text" id="nomEtPrenom" 
+                                                                    class="form-control" name="nomClient" ngModel>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="codePayement" class="control-label">Code payement : </label>
+                                                                <input type="text" id="codePayement" 
+                                                                    class="form-control" name="codePayement" ngModel>
+                                                            </div>
+                                                            <button class="btn btn-success" type="submit">Payer</button>
+                                                        </form>
+                                                    </div>   <!-- fin formulaire de reservation tickets : -->
+                                                </div> 
+                                            </div>                                                                                  
+                                        </div>  <!-- fin Liste des tickets d'une projection -->  
+                                    </div>                                    
+                                </div>
+                            </div> 
+                        </div><!-- fin Liste des salles -->
+                    </div> 
+                </div> <!-- fin panel-body -->
+            </div>
+        </div>  <!-- col-md-9 fin Afiche la liste des cinemas pour 1 ville V-->
+    </div>  <!-- fin row -->
+</div> <!-- fin container -->
+
